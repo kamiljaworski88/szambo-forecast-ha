@@ -46,4 +46,7 @@ priorytetu surowych danych i pomijania godziny zawierającej pompowanie.
 - Test nie uruchamia HTTP, frontendu ani skanowania interfejsów sieciowych;
   bada część Core, która jest potrzebna tej integracji.
 
-CI przygotowano, ale nie uruchomiono go na GitHub. Nie wykonano push ani publikacji.
+Po publikacji na GitHub workflow `Validate configuration and forecast` przeszedł:
+kontrole plików, 25 testów i test rzeczywistego HA Core 2025.10.4.
+Aktualne wyniki kolejnych uruchomień, w tym kontroli HACS, są dostępne
+w [GitHub Actions](https://github.com/kamiljaworski88/szambo-forecast-ha/actions).
