@@ -1,0 +1,11 @@
+{
+  "domain": "septic_forecast",
+  "name": "Prognoza szamba",
+  "version": "0.1.0",
+  "documentation": "https://github.com/kamiljaworski88/szambo-forecast-ha",
+  "issue_tracker": "https://github.com/kamiljaworski88/szambo-forecast-ha/issues",
+  "codeowners": ["@kamiljaworski88"],
+  "dependencies": ["recorder"],
+  "iot_class": "local_polling",
+  "requirements": []
+}

@@ -1,0 +1,6 @@
+mark_emptying:
+  name: Oznacz odbiór szamba
+  description: >-
+    Wywołaj raz po zakończeniu opróżniania i ustabilizowaniu odczytów.
+    Rozpoczyna nowy cykl. Godzina zawierająca odbiór nie jest używana do trendu.
+    Nie zmienia sensorów, nie usuwa historii Recorder ani wcześniejszych cykli.

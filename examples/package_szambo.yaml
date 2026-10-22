@@ -1,0 +1,22 @@
+# /config/packages/szambo_prognoza.yaml
+# Merge package loading into the EXISTING homeassistant: section.
+septic_forecast:
+  level_entity: sensor.procent_szamba
+  distance_entity: sensor.czujnik_szamba_distance_sensor
+  threshold_entity: input_number.szambo_prognoza_prog
+  # All available history, not a 7/14-day window. Optional lower bound.
+  history_start: '2000-01-01'
+  emptying_drop: 15
+
+input_number:
+  szambo_prognoza_prog:
+    name: Szambo — próg prognozy
+    min: 1
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: '%'
+    icon: mdi:water-percent-alert
+    initial: 90
+    # For a threshold that survives restarts, remove initial: AFTER the first
+    # successful start. HA will then restore the last helper value.

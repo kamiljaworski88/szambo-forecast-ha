@@ -1,0 +1,61 @@
+# A single card: paste into an existing view next to your current readings.
+# Keep your current source-entity rows if they already exist; this example
+# includes the supplied original colours as an optional complete replacement.
+type: vertical-stack
+cards:
+  - type: entities
+    title: Szambo
+    entities:
+      - entity: sensor.procent_szamba
+        name: Procent zapełnienia szamba
+        icon: mdi:label-percent
+        card_mod:
+          style: |
+            :host {
+              {% set p = states(config.entity) | float(none) %}
+              {% set c = 'var(--secondary-text-color)' if p is none else
+                ('red' if p >= 90 else ('orange' if p >= 60 else 'green')) %}
+              color: {{ c }};
+              --card-mod-icon-color: {{ c }};
+            }
+      - entity: sensor.czujnik_szamba_distance_sensor
+        name: Dostępna przestrzeń
+        icon: mdi:water-percent
+  - type: markdown
+    title: Prognoza odbioru szamba
+    content: >-
+      {% set days = states('sensor.szambo_dni_do_odbioru') | float(none) %}
+      {% set date = states('sensor.szambo_przewidywana_data_odbioru') %}
+      {% set months = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja',
+        'czerwca', 'lipca', 'sierpnia', 'września', 'października',
+        'listopada', 'grudnia'] %}
+      {% if days is none or as_datetime(date, none) is none %}
+        **Brak wiarygodnej prognozy**
+
+        {{ state_attr('sensor.szambo_wiarygodnosc_prognozy', 'powod')
+           or 'Wczytywanie danych' }}
+      {% elif days <= 0 %}
+        **Próg osiągnięty — zamów odbiór szamba.**
+      {% else %}
+        {% set d = as_local(as_datetime(date)) %}
+        **{{ 'Mniej niż 1 dzień' if days < 1 else
+          'Około ' ~ (days | round(0) | int) ~ ' dni' }}** —
+        przewidywany próg: **{{ d.day }} {{ months[d.month - 1] }} {{ d.year }}**.
+      {% endif %}
+  - type: entities
+    entities:
+      - entity: sensor.szambo_tempo_napelniania
+        name: Tempo napełniania
+      - entity: sensor.szambo_wiarygodnosc_prognozy
+        name: Wiarygodność prognozy
+      - entity: input_number.szambo_prognoza_prog
+        name: Próg prognozy
+      - type: button
+        name: Oznacz zakończony odbiór
+        icon: mdi:tanker-truck
+        action_name: Oznacz
+        tap_action:
+          action: perform-action
+          perform_action: septic_forecast.mark_emptying
+          confirmation:
+            text: Czy odbiór jest zakończony, a odczyty już się ustabilizowały?

@@ -1,0 +1,6 @@
+# MERGE with the existing homeassistant: section; do not create a second key.
+homeassistant:
+  packages: !include_dir_named packages
+
+# Copy examples/package_szambo.yaml into /config/packages/szambo_prognoza.yaml.
+# No Recorder changes are required by this project.
