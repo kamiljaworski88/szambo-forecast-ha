@@ -1,5 +1,15 @@
 # Zmiany
 
+## 0.2.0
+
+- Konfigurator przez Ustawienia → Urządzenia i usługi → Dodaj integrację.
+- Wybór istniejących sensorów i opcjonalnego helpera w interfejsie HA.
+- Trwały próg `number.szambo_prognoza_prog` (domyślnie 90%), gdy nie wybrano helpera.
+- Opcje integracji, przeładowanie, wyłączenie i ponowne włączenie.
+- Automatyczny import konfiguracji YAML z zachowaniem identyfikatorów encji i archiwum.
+- Polskie i angielskie etykiety oraz komunikaty błędów formularza.
+- Oddzielny przykład dashboardu dla konfiguracji UI.
+
 ## 0.1.0
 
 - Pierwsze wydanie integracji do instalacji przez HACS jako repozytorium niestandardowe.

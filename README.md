@@ -3,6 +3,7 @@
 [![Dodaj do HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=kamiljaworski88&repository=szambo-forecast-ha&category=integration)
 
 Lokalna integracja prognozująca dni i datę osiągnięcia progu zapełnienia.
+Od wersji **0.2.0** konfigurację dodaje się z interfejsu Home Assistant.
 Domyślny próg: **90%**. Zachowuje istniejące sensory i wzór
 `(1 - distance / 1.60) * 100`. Nie steruje urządzeniami i nie wysyła danych do chmury.
 
@@ -21,15 +22,42 @@ i pobierz wydanie. Możesz też użyć przycisku „Dodaj do HACS” powyżej.
 
 To repozytorium niestandardowe; nie jest automatycznie częścią domyślnego
 katalogu HACS. **HACS pobiera kod integracji, ale nie kopiuje przykładów do
-Twojej konfiguracji ani nie edytuje dashboardu.** Po pobraniu wykonaj kroki
-2–7 poniżej, a potem zrestartuj HA. Aktualizacje kodu wykonujesz przez HACS,
-z restartem HA po aktualizacji; własny pakiet YAML i archiwum pozostają w HA.
+Twojej konfiguracji ani nie edytuje dashboardu.** Aktualizacje kodu wykonujesz
+przez HACS, z restartem HA po aktualizacji; archiwum pozostaje w HA.
 
-### Konfiguracja po pobraniu
+### Konfiguracja w interfejsie HA (zalecana)
+
+1. Pobierz **0.2.0 lub nowszą** w HACS i **zrestartuj Home Assistant**.
+2. Otwórz **Ustawienia → Urządzenia i usługi → Dodaj integrację → Prognoza szamba**.
+3. Wybierz sensor procentu `sensor.procent_szamba` oraz sensor odległości
+   `sensor.czujnik_szamba_distance_sensor`. Pozostaw próg 90% i datę początku
+   historii 2000-01-01, aby wykorzystać całą dostępną historię.
+4. Pole istniejącego helpera pozostaw puste. Integracja utworzy
+   `number.szambo_prognoza_prog` z trwałym progiem — jego zmiana przeżywa restart.
+   Możesz zamiast tego wskazać istniejący `input_number` lub `number`.
+   Wtedy jego wartość jest progiem, a integracja nie tworzy dodatkowego pola liczbowego.
+5. Dodaj kartę z `examples/dashboard_szambo_ui.yaml` do własnego dashboardu.
+   Jeżeli wybrano zewnętrzny helper, zastąp w karcie ID progu jego identyfikatorem.
+
+**Nie dopisujesz niczego do `configuration.yaml` przy instalacji przez UI.**
+Opcje sensorów, początku historii i wykrywania odbioru można później zmienić
+w opcjach integracji. Próg zmieniasz przez encję liczbową na dashboardzie.
+
+Jeśli nadal pojawia się komunikat o braku możliwości dodania przez interfejs,
+sprawdź zainstalowaną wersję w HACS, uruchom ponownie HA po aktualizacji,
+a następnie odśwież przeglądarkę. Wersja 0.1.0 obsługiwała wyłącznie YAML.
+
+### Istniejąca instalacja YAML / instalacja alternatywna
+
+Konfiguracja z wersji 0.1.0 zostanie automatycznie zaimportowana jako jedna
+pozycja w integracjach. Zachowuje dotychczasowe identyfikatory sensorów,
+zewnętrzny helper oraz archiwum historii i znaczniki odbioru. Nie dodawaj drugiej
+instancji przez UI. Po udanym imporcie możesz usunąć sekcję `septic_forecast:`
+z YAML; pozostaw definicję helpera `input_number`, jeżeli nadal go używasz.
 
 1. Jeśli instalujesz ręcznie zamiast przez HACS, skopiuj folder
    `custom_components/septic_forecast` do `/config/custom_components/septic_forecast`.
-   To integracja YAML; nie dodajesz jej przez „Dodaj integrację”.
+   Przy poniższym wariancie YAML import nastąpi automatycznie.
    Wersja przetestowana: **HA Core 2025.10.4**.
    Nowsze wersje wymagają sprawdzenia konfiguracji i testu uruchomienia na Twoim HA.
 2. Jeśli nie używasz pakietów, **dopisz** `packages: !include_dir_named packages`
@@ -65,7 +93,8 @@ Kolorowanie z przykładu wymaga już używanego `card-mod`; prognoza go nie wyma
 | `sensor.szambo_przewidywana_data_odbioru` | Data/czas osiągnięcia progu; `unknown` bez prognozy |
 | `sensor.szambo_tempo_napelniania` | Tempo użyte w prognozie, w punktach procentowych na dobę |
 | `sensor.szambo_wiarygodnosc_prognozy` | `brak`, `ograniczona`, `wysoka` lub `próg osiągnięty` |
-| `input_number.szambo_prognoza_prog` | Jedyny dodawany helper, domyślnie 90% |
+| `number.szambo_prognoza_prog` | Trwały próg, domyślnie 90%, tworzony przy konfiguracji UI bez zewnętrznego helpera |
+| `input_number.szambo_prognoza_prog` | Zewnętrzny helper z przykładu YAML; opcjonalny przy konfiguracji UI |
 | `septic_forecast.mark_emptying` | Akcja ręcznego oznaczenia zakończonego odbioru |
 
 Sensor wiarygodności zawiera powód decyzji, liczbę dni bieżącego cyklu,
@@ -199,6 +228,7 @@ Osobny test rzeczywistego HA Core (Python 3.13, środowisko testowe):
 ```bash
 python -m pip install homeassistant==2025.10.4 PyYAML 'pycares<5'
 python scripts/smoke_ha.py
+python scripts/smoke_ha.py --ui
 ```
 
 Ograniczenie `pycares<5` dotyczy środowiska testowego starego HA i jego `aiodns`;
@@ -206,7 +236,11 @@ nie instaluj tych pakietów ręcznie w produkcyjnym HA OS.
 Test tworzy i usuwa tymczasową bazę SQLite, importuje syntetyczne statystyki
 obejmujące okres sprzed ponad 400 dni, uruchamia prawdziwe integracje Recorder,
 sensorów i helpera, sprawdza wynik, szablon dashboardu, zmianę progu,
-ręczny reset oraz ponowne wczytanie archiwum. Nie uruchamia serwera HTTP.
+ręczny reset oraz ponowne wczytanie archiwum. Drugi wariant sprawdza konfigurator
+UI, walidację pól, opcje i ponowne ładowanie integracji, trwałość progu,
+ochronę przed duplikatami oraz wyłączenie i ponowne włączenie. Wariant YAML
+sprawdza zachowanie starego archiwum i migrację encji bez dodawania `_2`.
+Testy nie uruchamiają serwera HTTP.
 Wyniki wykonanych kontroli opisuje `VALIDATION.md`.
 
 Sprawdzenie na docelowym HA:
@@ -217,7 +251,7 @@ Sprawdzenie na docelowym HA:
    sensory i helper. Początkowo wynik może być `unknown` podczas importu.
 3. Otwórz atrybuty sensora wiarygodności i porównaj początek archiwum z historią
    rzeczywiście dostępną w HA. Sprawdź liczbę pełnych cykli i powody odrzucenia.
-4. Zmień helper np. 90 → 85 i sprawdź, że liczba dni maleje, a kolory oryginalnego
+4. Zmień próg np. 90 → 85 i sprawdź, że liczba dni maleje, a kolory oryginalnego
    procentu zachowują progi 60 i 90. Wróć do żądanego progu.
 5. Przelicz ręcznie `(próg − procent) / tempo` i porównaj wynik (zaokrąglenia).
 6. Po prawdziwym odbiorze sprawdź, czy pojawia się nowy cykl i tymczasowy brak
@@ -252,6 +286,7 @@ Sprawdzenie na docelowym HA:
 - `examples/package_szambo.yaml`: integracja i jeden helper.
 - `examples/configuration_fragment.yaml`: dołączanie pakietów.
 - `examples/dashboard_szambo.yaml`: karta z polskim komunikatem i progiem.
+- `examples/dashboard_szambo_ui.yaml`: karta dla progu utworzonego przez integrację UI.
 - `tests/`: scenariusze modelu i adaptera historii.
 - `scripts/check.py`: kontrole offline.
 - `scripts/smoke_ha.py`: test na rzeczywistym HA Core i tymczasowej bazie SQLite.
@@ -261,6 +296,11 @@ Sprawdzenie na docelowym HA:
 - `PRIVACY.md`: przepływ i zakres danych.
 - `CHANGELOG.md`, `LICENSE`: historia wydań i licencja MIT.
 - `VALIDATION.md`: wynik wykonanych kontroli i granice weryfikacji.
+
+Usunięcie integracji z UI usuwa jej encje i zatrzymuje odczyty; archiwum
+`.storage/septic_forecast` pozostaje do ponownego dodania. Nie usuwa źródłowych
+sensorów ani historii Recorder. Przed zmianą sensorów lub daty początku historii
+zachowaj kopię zapasową HA — inny zestaw źródeł rozpoczyna inne archiwum.
 
 Źródła projektu: [Recorder](https://www.home-assistant.io/integrations/recorder/),
 [statystyki a statystyki długoterminowe](https://www.home-assistant.io/integrations/statistics/),

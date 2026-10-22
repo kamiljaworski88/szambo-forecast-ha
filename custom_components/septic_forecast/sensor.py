@@ -13,8 +13,8 @@ SENSORS = (
 )
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    async_add_entities([ForecastSensor(hass.data[DOMAIN], *description) for description in SENSORS])
+async def async_setup_entry(hass, entry, async_add_entities):
+    async_add_entities([ForecastSensor(entry.runtime_data, *description) for description in SENSORS])
 
 
 class ForecastSensor(SensorEntity):

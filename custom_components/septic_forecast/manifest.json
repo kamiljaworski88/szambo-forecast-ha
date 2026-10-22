@@ -1,7 +1,8 @@
 {
   "domain": "septic_forecast",
   "name": "Prognoza szamba",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "config_flow": true,
   "documentation": "https://github.com/kamiljaworski88/szambo-forecast-ha",
   "issue_tracker": "https://github.com/kamiljaworski88/szambo-forecast-ha/issues",
   "codeowners": ["@kamiljaworski88"],

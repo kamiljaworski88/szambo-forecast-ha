@@ -1,0 +1,52 @@
+{
+  "title": "Septic forecast",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Septic forecast",
+        "description": "Select your existing sensors. Leave the helper empty to create a persistent threshold, initially 90%. All available history from the selected date is imported. A selected external helper supplies its own threshold value.",
+        "data": {
+          "level_entity": "Fill percentage sensor",
+          "distance_entity": "Distance / available space sensor",
+          "threshold": "Initial forecast threshold",
+          "threshold_entity": "Existing threshold helper (optional)",
+          "history_start": "History start date",
+          "emptying_drop": "Emptying detection drop"
+        }
+      }
+    },
+    "error": {
+      "entity_missing": "This entity does not exist in Home Assistant.",
+      "same_entity": "Select two different sensors for percentage and distance.",
+      "own_threshold": "Select an external helper or leave empty to use this integration’s threshold.",
+      "future_date": "History cannot start in the future.",
+      "invalid_date": "Enter a valid date."
+    },
+    "abort": {
+      "single_instance_allowed": "Septic forecast is already configured. Open its options.",
+      "already_configured": "This integration is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Forecast settings",
+        "description": "Changing sensors or the history start date starts a new import instead of using the previous configuration’s archive. Change the threshold using its number entity or selected helper.",
+        "data": {
+          "level_entity": "Fill percentage sensor",
+          "distance_entity": "Distance / available space sensor",
+          "threshold_entity": "Existing threshold helper (optional)",
+          "history_start": "History start date",
+          "emptying_drop": "Emptying detection drop"
+        }
+      }
+    },
+    "error": {
+      "entity_missing": "This entity does not exist in Home Assistant.",
+      "same_entity": "Select two different sensors for percentage and distance.",
+      "own_threshold": "Select an external helper or leave empty to use this integration’s threshold.",
+      "future_date": "History cannot start in the future.",
+      "invalid_date": "Enter a valid date."
+    }
+  }
+}

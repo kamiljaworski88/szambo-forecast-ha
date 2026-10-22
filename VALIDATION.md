@@ -6,7 +6,10 @@
   kluczy) i **25 testów jednostkowych**.
 - `python scripts/smoke_ha.py` w środowisku **Python 3.13.16 / HA Core
   2025.10.4**: rzeczywiste uruchomienie integracji bez atrap API HA, na
-  tymczasowej bazie SQLite.
+  tymczasowej bazie SQLite; konfiguracja YAML automatycznie importowana do UI.
+- `python scripts/smoke_ha.py --ui`: konfiguracja bez YAML przez rzeczywisty
+  silnik formularzy konfiguracyjnych HA, opcje, przeładowanie i cykl życia wpisu.
+  Oba warianty wymagają braku komunikatów ERROR także podczas zamykania HA.
 
 Test uruchomieniowy potwierdził:
 
@@ -21,6 +24,13 @@ Test uruchomieniowy potwierdził:
 8. Wyzerowanie wiedzy o nowym bieżącym cyklu po ręcznym oznaczeniu odbioru,
    bez liczenia spadku jako ujemnego tempa.
 9. Trwały zapis i ponowne odczytanie agregatów oraz ręcznego znacznika.
+10. Migrację poprzedniego archiwum oraz encji bez zmiany ID i duplikatów `_2`.
+11. Formularz dodawania z UI, blokadę drugiej instancji i odrzucenie wyboru
+    tego samego sensora do procentu i odległości.
+12. Automatyczne utworzenie `number.szambo_prognoza_prog`, trwałość wartości 85%
+    przy zmianie opcji, wyłączeniu i ponownym włączeniu integracji.
+13. Odrzucenie próby wskazania własnego pola progu jako zewnętrznego helpera.
+14. Usunięcie nasłuchów i akcji podczas wyłączenia oraz przywrócenie po włączeniu.
 
 Testy jednostkowe pokryły krótką historię, stabilny wzrost, stagnację, tempo
 ujemne, wartości spoza zakresu, `unknown`, `unavailable`, NaN, niespójne dane,

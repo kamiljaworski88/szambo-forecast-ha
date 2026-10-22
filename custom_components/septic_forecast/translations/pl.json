@@ -1,0 +1,52 @@
+{
+  "title": "Prognoza szamba",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Prognoza szamba",
+        "description": "Wybierz istniejące sensory. Pozostaw pole helpera puste, aby automatycznie utworzyć trwały próg 90%. Historia obejmie cały dostępny okres od wskazanej daty. Przy wybranym helperze obowiązuje jego wartość.",
+        "data": {
+          "level_entity": "Sensor procentowego zapełnienia",
+          "distance_entity": "Sensor odległości / dostępnej przestrzeni",
+          "threshold": "Początkowy próg prognozy",
+          "threshold_entity": "Istniejący helper progu (opcjonalnie)",
+          "history_start": "Początek historii",
+          "emptying_drop": "Spadek potwierdzający opróżnienie"
+        }
+      }
+    },
+    "error": {
+      "entity_missing": "Ta encja nie istnieje w Home Assistant.",
+      "same_entity": "Wybierz dwa różne sensory: procent oraz odległość.",
+      "own_threshold": "Wybierz zewnętrzny helper albo pozostaw pole puste, aby używać progu tej integracji.",
+      "future_date": "Data początku historii nie może być w przyszłości.",
+      "invalid_date": "Podaj poprawną datę."
+    },
+    "abort": {
+      "single_instance_allowed": "Prognoza szamba jest już skonfigurowana. Otwórz jej opcje.",
+      "already_configured": "Ta integracja jest już skonfigurowana."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Ustawienia prognozy",
+        "description": "Zmiana sensorów albo początku historii rozpocznie nowy import zamiast używać archiwum poprzedniej konfiguracji. Próg zmieniaj przez encję liczbową lub wybrany helper.",
+        "data": {
+          "level_entity": "Sensor procentowego zapełnienia",
+          "distance_entity": "Sensor odległości / dostępnej przestrzeni",
+          "threshold_entity": "Istniejący helper progu (opcjonalnie)",
+          "history_start": "Początek historii",
+          "emptying_drop": "Spadek potwierdzający opróżnienie"
+        }
+      }
+    },
+    "error": {
+      "entity_missing": "Ta encja nie istnieje w Home Assistant.",
+      "same_entity": "Wybierz dwa różne sensory: procent oraz odległość.",
+      "own_threshold": "Wybierz zewnętrzny helper albo pozostaw pole puste, aby używać progu tej integracji.",
+      "future_date": "Data początku historii nie może być w przyszłości.",
+      "invalid_date": "Podaj poprawną datę."
+    }
+  }
+}
