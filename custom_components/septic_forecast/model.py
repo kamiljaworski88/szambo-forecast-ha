@@ -211,32 +211,43 @@ def predict(
             historical.append(typical)
     out.complete_cycles = len(historical)
     out.historical_rate = median(historical) if historical else None
+    historical_fallback = False
     if rate is None:
-        out.reason = "Za krótki cykl — wymagane co najmniej 3 pełne dni danych"
-        return out
+        # A short/new current cycle can still use a stable reference built from
+        # several independently validated, complete historical cycles.
+        if out.complete_cycles < 3 or out.historical_rate is None:
+            out.reason = (
+                "Za krótki cykl — wymagane 3 pełne dni bieżące "
+                "lub 3 pełne cykle historyczne"
+            )
+            return out
+        rate = out.historical_rate
+        out.current_weight = 0.0
+        historical_fallback = True
     if not 0.05 < rate <= 25:
         out.reason = "Brak dodatniego, mierzalnego tempa napełniania"
         return out
-    if error > 2.5 or error > max(1.5, rate * 2):
-        out.reason = "Niestabilny trend — brak wiarygodnej prognozy"
-        return out
-    # All current-cycle days define its rate; recent days catch usage changes.
-    recent, recent_error = robust_rate(current_days[-7:])
-    if recent is not None and recent <= 0.05:
-        out.reason = "Ostatnie dni bez wzrostu — brak wiarygodnej prognozy"
-        return out
-    if recent is not None and abs(recent - rate) > max(0.5, rate * 0.3):
-        if recent > 25 or recent_error > 2.5:
-            out.reason = "Niestabilne ostatnie dni — brak wiarygodnej prognozy"
+    if not historical_fallback:
+        if error > 2.5 or error > max(1.5, rate * 2):
+            out.reason = "Niestabilny trend — brak wiarygodnej prognozy"
             return out
-        rate = 0.8 * recent + 0.2 * rate
-    typical = out.historical_rate
-    weight = 1.0
-    if typical is not None:
-        different = abs(rate - typical) > max(0.5, typical * 0.3)
-        weight = 0.9 if different else (0.8 if len(current_days) >= 7 else 0.65)
-        rate = weight * rate + (1 - weight) * typical
-    out.current_weight = weight
+        # All current-cycle days define its rate; recent days catch usage changes.
+        recent, recent_error = robust_rate(current_days[-7:])
+        if recent is not None and recent <= 0.05:
+            out.reason = "Ostatnie dni bez wzrostu — brak wiarygodnej prognozy"
+            return out
+        if recent is not None and abs(recent - rate) > max(0.5, rate * 0.3):
+            if recent > 25 or recent_error > 2.5:
+                out.reason = "Niestabilne ostatnie dni — brak wiarygodnej prognozy"
+                return out
+            rate = 0.8 * recent + 0.2 * rate
+        typical = out.historical_rate
+        weight = 1.0
+        if typical is not None:
+            different = abs(rate - typical) > max(0.5, typical * 0.3)
+            weight = 0.9 if different else (0.8 if len(current_days) >= 7 else 0.65)
+            rate = weight * rate + (1 - weight) * typical
+        out.current_weight = weight
     out.rate = rate
     out.days = (target - current) / rate
     if out.days > 365:
@@ -244,6 +255,13 @@ def predict(
         out.reason = "Prognoza wykracza poza wiarygodny horyzont 365 dni"
         return out
     out.date = now + timedelta(days=out.days)
-    out.confidence = "wysoka" if len(current_days) >= 7 and historical and error <= 1.5 else "ograniczona"
-    out.reason = "Prognoza orientacyjna" if out.confidence == "ograniczona" else "Stabilny bieżący cykl i porównanie z historią"
+    if historical_fallback:
+        out.confidence = "ograniczona"
+        out.reason = (
+            "Za krótki bieżący cykl — tempo z "
+            f"{out.complete_cycles} pełnych cykli historycznych"
+        )
+    else:
+        out.confidence = "wysoka" if len(current_days) >= 7 and historical and error <= 1.5 else "ograniczona"
+        out.reason = "Prognoza orientacyjna" if out.confidence == "ograniczona" else "Stabilny bieżący cykl i porównanie z historią"
     return out

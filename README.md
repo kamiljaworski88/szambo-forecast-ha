@@ -165,7 +165,10 @@ bieżącej konfiguracji Recorder, a nie gwarantowaną dostępność historii.
    Przerwa >48 godzin rozdziela ciąg danych, bo mogła ukryć odbiór.
 4. Z każdego cyklu osobno powstają mediany dni lokalnych. Dzień wymaga ≥6 godzin
    rozciągniętych na ≥5 godzin; dzisiejszy dzień jest wyłączony z dopasowania.
-   Minimum do modelowania to 3 takie dni rozciągnięte na około 2 doby.
+   Minimum do wyznaczenia bieżącego tempa to 3 takie dni rozciągnięte na
+   około 2 doby. Gdy bieżący cykl jest krótszy, prognoza może użyć mediany
+   z co najmniej 3 pełnych cykli historycznych; taki wynik ma ograniczoną
+   wiarygodność i jawnie wskazuje użycie tempa historycznego.
 5. Tempo jest medianą nachyleń par punktów (Theil–Sen), odporną na pojedyncze
    odchylenia. Wykorzystuje **cały bieżący cykl**. Dla cyklu >120 dni obliczenie
    obejmuje 120 punktów równomiernie wybranych z całego okresu.
@@ -182,7 +185,8 @@ bieżącej konfiguracji Recorder, a nie gwarantowaną dostępność historii.
    Bieżący procent zawsze pochodzi z Twojego oryginalnego sensora.
 
 Nie ma prognozy przy błędnych danych, rozbieżności procentu i odległości >5 p.p.,
-braku świeżych źródeł lub agregatów przez 6 godzin, braku wystarczających dni,
+braku świeżych źródeł lub agregatów przez 6 godzin, braku 3 pełnych dni bieżącego
+cyklu i jednocześnie braku 3 poprawnych pełnych cykli historycznych,
 nierozstrzygniętym opróżnieniu, tempie ≤0,05 albo >25 p.p./dobę,
 zbyt niestabilnym trendzie lub horyzoncie >365 dni. Ostatni tydzień bez wzrostu
 również wstrzymuje prognozę mimo starszego dodatniego trendu.
