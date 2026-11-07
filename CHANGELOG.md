@@ -1,5 +1,10 @@
 # Zmiany
 
+## 0.2.1
+
+- Przy krótkim bieżącym cyklu prognoza używa mediany z co najmniej 3 poprawnych pełnych cykli historycznych.
+- Wynik oparty na historii ma ograniczoną wiarygodność i podaje ten powód w atrybutach.
+
 ## 0.2.0
 
 - Konfigurator przez Ustawienia → Urządzenia i usługi → Dodaj integrację.
